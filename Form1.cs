@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,16 +14,33 @@ namespace Lab3
     public partial class Form1 : Form
     {
 
+        //trace listener enabled(?)
+        private BooleanSwitch traceSwitch = new BooleanSwitch("TraceSwitch", "Trace switch enabled");
+
+        //log file path
+        private string logFile = "log.txt";
+
         // list of blocked keywords
         private List<string> blockedKeywords = new List<string>
         {
             "facebook","twitter","umfst","youtube","instagram", "tiktok"
         };
-
+        
         public Form1()
         {
             InitializeComponent();
-            
+
+            // clear listeners
+            Trace.Listeners.Clear();
+
+            // add trace listener to log file
+            Trace.Listeners.Add(new TextWriterTraceListener(logFile));
+
+            //autoflush, enable
+            Trace.AutoFlush = true;
+            traceSwitch.Enabled = true;
+            Trace.WriteLineIf(traceSwitch.Enabled, $"Application started at {DateTime.Now}");
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -54,9 +72,13 @@ namespace Lab3
                 if (!url.StartsWith("http"))
                 {
                     url = "https://" + url;
+                    Trace.WriteLineIf(traceSwitch.Enabled, $"Inserted https:// to URL: {url} at {DateTime.Now}");
                 }
                 webBrowser1.Navigate(url);
+
             }
+            Trace.WriteLineIf(traceSwitch.Enabled, $"URL entered by clicking Go: {txtURL.Text} at {DateTime.Now}");
+
         }
 
         private void txtURL_Click(object sender, EventArgs e)
@@ -66,17 +88,16 @@ namespace Lab3
 
         private void txtURL_KeyDown(object sender, KeyEventArgs e)
         {
+            string url = txtURL.Text;
             if (e.KeyCode == Keys.Enter)
             {
-                // prevent the "ding" sound
-                e.SuppressKeyPress = true;
-
-                // simulate clicking the Go button
-                goButton.PerformClick();
+                // go to URL
+                webBrowser1.Navigate(url);
             }
+            Trace.WriteLineIf (traceSwitch.Enabled, $"URL entered by clicking Enter: {txtURL.Text} at {DateTime.Now}");
         }
 
-        // check if the URL contains any blocked keywords
+        // check if URL has blocked keywords
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             string url = e.Url.ToString().ToLower();
@@ -88,7 +109,7 @@ namespace Lab3
                 // if contains
                 if (url.Contains(keyword))
                 {
-                    //stop navigation and show message box
+                    //stop navigation
                     e.Cancel = true; 
                     MessageBox.Show(
                         $"Access to sites containing \"{keyword}\" is blocked.",
@@ -116,7 +137,12 @@ namespace Lab3
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
                 );
+
+                // log to file
+                Trace.WriteLineIf(traceSwitch.Enabled, $"Blocked navigation to {url} at {DateTime.Now} due to keyword \"{foundKeyword}\"");
                 return;
+
+                
             }
         }
     }

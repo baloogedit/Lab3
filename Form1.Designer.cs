@@ -60,7 +60,7 @@
             this.goButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1262, 42);
+            this.toolStrip1.Size = new System.Drawing.Size(1262, 50);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -70,7 +70,7 @@
             this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("backButton.Image")));
             this.backButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.backButton.Name = "backButton";
-            this.backButton.Size = new System.Drawing.Size(46, 36);
+            this.backButton.Size = new System.Drawing.Size(46, 44);
             this.backButton.Text = "backButton";
             this.backButton.Click += new System.EventHandler(this.backButton_Click);
             // 
