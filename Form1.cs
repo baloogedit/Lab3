@@ -76,15 +76,20 @@ namespace Lab3
             }
         }
 
+        // check if the URL contains any blocked keywords
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             string url = e.Url.ToString().ToLower();
 
+            /*
+            // for every keyword in the blocked list
             foreach (var keyword in blockedKeywords)
             {
+                // if contains
                 if (url.Contains(keyword))
                 {
-                    e.Cancel = true; // stop navigation
+                    //stop navigation and show message box
+                    e.Cancel = true; 
                     MessageBox.Show(
                         $"Access to sites containing \"{keyword}\" is blocked.",
                         "Blocked Site",
@@ -93,6 +98,25 @@ namespace Lab3
                     );
                     return;
                 }
+            }
+            */
+
+            // searck blocked keywords with LINQ
+            var foundKeyword = (from keyword in blockedKeywords
+                                where url.Contains(keyword)
+                                select keyword).FirstOrDefault();
+            // if found
+            if (foundKeyword != null)
+            {
+                //stop navigation and show message box
+                e.Cancel = true;
+                MessageBox.Show(
+                    $"Access to sites containing \"{foundKeyword}\" is blocked.",
+                    "Blocked Site",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
             }
         }
     }
