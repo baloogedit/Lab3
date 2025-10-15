@@ -12,6 +12,13 @@ namespace Lab3
 {
     public partial class Form1 : Form
     {
+
+        // list of blocked keywords
+        private List<string> blockedKeywords = new List<string>
+        {
+            "facebook","twitter","umfst","youtube","instagram", "tiktok"
+        };
+
         public Form1()
         {
             InitializeComponent();
@@ -21,12 +28,12 @@ namespace Lab3
         private void Form1_Load(object sender, EventArgs e)
         {
             webBrowser1.ScriptErrorsSuppressed = true;
-            webBrowser1.Navigate("https://www.bing.com"); //default home page
+            webBrowser1.Navigate("https://www.google.com"); //default home page
         }
 
         private void homeButton_Click(object sender, EventArgs e)
         {
-            webBrowser1.GoHome();
+            webBrowser1.Navigate("https://www.google.com");
         }
 
         private void backButton_Click(object sender, EventArgs e)
@@ -57,5 +64,36 @@ namespace Lab3
 
         }
 
+        private void txtURL_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                // prevent the "ding" sound
+                e.SuppressKeyPress = true;
+
+                // simulate clicking the Go button
+                goButton.PerformClick();
+            }
+        }
+
+        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            string url = e.Url.ToString().ToLower();
+
+            foreach (var keyword in blockedKeywords)
+            {
+                if (url.Contains(keyword))
+                {
+                    e.Cancel = true; // stop navigation
+                    MessageBox.Show(
+                        $"Access to sites containing \"{keyword}\" is blocked.",
+                        "Blocked Site",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
+                }
+            }
+        }
     }
 }

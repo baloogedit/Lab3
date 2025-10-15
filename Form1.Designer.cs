@@ -47,6 +47,7 @@
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.Size = new System.Drawing.Size(1262, 848);
             this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
             // 
             // toolStrip1
             // 
@@ -97,7 +98,8 @@
             // 
             this.txtURL.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtURL.Name = "txtURL";
-            this.txtURL.Size = new System.Drawing.Size(500, 42);
+            this.txtURL.Size = new System.Drawing.Size(500, 50);
+            this.txtURL.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtURL_KeyDown);
             this.txtURL.Click += new System.EventHandler(this.txtURL_Click);
             // 
             // goButton
