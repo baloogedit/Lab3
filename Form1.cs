@@ -40,7 +40,9 @@ namespace Lab3
             //autoflush, enable
             Trace.AutoFlush = true;
             traceSwitch.Enabled = true;
-            File.WriteAllText(logFile, ""); // clear log file at start
+
+            // clear log file at start
+            File.WriteAllText(logFile, "");
             Trace.WriteLineIf(traceSwitch.Enabled, $"Application started at {DateTime.Now}");
 
         }
@@ -109,7 +111,8 @@ namespace Lab3
             string url = e.Url.ToString().ToLower();
 
             /*
-            // for every keyword in the blocked list
+            // foreach seach: every keyword in the blocked list
+
             foreach (var keyword in blockedKeywords)
             {
                 // if contains
@@ -176,7 +179,7 @@ namespace Lab3
                     // log the addition
                     Trace.WriteLineIf(traceSwitch.Enabled, $"Keyword added: {newKeyword} at {DateTime.Now}");
 
-                    // show updated list
+                    // show confirmation
                     MessageBox.Show(
                         $"Keyword \"{newKeyword}\" added to the blocked list.\n\n",
                         "Keyword Added",
