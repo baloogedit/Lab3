@@ -38,6 +38,7 @@
             this.goButton = new System.Windows.Forms.ToolStripButton();
             this.toolStriptxtKeyword = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripBtnAddKeyword = new System.Windows.Forms.ToolStripButton();
+            this.toolStripComboBoxBlocked = new System.Windows.Forms.ToolStripComboBox();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +62,8 @@
             this.txtURL,
             this.goButton,
             this.toolStriptxtKeyword,
-            this.toolStripBtnAddKeyword});
+            this.toolStripBtnAddKeyword,
+            this.toolStripComboBoxBlocked});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1262, 42);
@@ -133,6 +135,11 @@
             this.toolStripBtnAddKeyword.Text = "toolStripbtnAddKeyword";
             this.toolStripBtnAddKeyword.Click += new System.EventHandler(this.toolStripBtnAddKeyword_Click);
             // 
+            // toolStripComboBoxBlocked
+            // 
+            this.toolStripComboBoxBlocked.Name = "toolStripComboBoxBlocked";
+            this.toolStripComboBoxBlocked.Size = new System.Drawing.Size(121, 42);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -161,6 +168,7 @@
         private System.Windows.Forms.ToolStripTextBox txtURL;
         private System.Windows.Forms.ToolStripTextBox toolStriptxtKeyword;
         private System.Windows.Forms.ToolStripButton toolStripBtnAddKeyword;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBoxBlocked;
     }
 }
 

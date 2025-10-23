@@ -49,6 +49,8 @@ namespace Lab3
         {
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser1.Navigate("https://www.google.com"); //default home page
+
+            toolStripComboBoxBlocked.Items.AddRange(blockedKeywords.ToArray());
         }
 
         private void homeButton_Click(object sender, EventArgs e)
@@ -159,20 +161,24 @@ namespace Lab3
                 // LINQ check for keyword
                 var existingKeyword =
                      (from k in blockedKeywords
-                      where k.Equals(newKeyword, StringComparison.OrdinalIgnoreCase)
+                      where k.Equals(newKeyword)
                       select k).FirstOrDefault();
 
                 if (existingKeyword == null)
                 {
+                    //add to list
                     blockedKeywords.Add(newKeyword);
+
+                    //add to combobox
+                    toolStripComboBoxBlocked.Items.Add(newKeyword);
+
 
                     // log the addition
                     Trace.WriteLineIf(traceSwitch.Enabled, $"Keyword added: {newKeyword} at {DateTime.Now}");
 
                     // show updated list
                     MessageBox.Show(
-                        $"Keyword \"{newKeyword}\" added to the blocked list.\n\n" +
-                        $"Current blocked keywords:\n{string.Join(", ", blockedKeywords)}",
+                        $"Keyword \"{newKeyword}\" added to the blocked list.\n\n",
                         "Keyword Added",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information
@@ -181,6 +187,8 @@ namespace Lab3
 
                 else
                 {
+                    Trace.WriteLineIf(traceSwitch.Enabled, $"Tried adding duplicate keyword: {newKeyword} at {DateTime.Now}");
+
                     MessageBox.Show(
                         $"Keyword \"{existingKeyword}\" is already blocked.",
                         "Duplicate Keyword",
@@ -191,6 +199,9 @@ namespace Lab3
             }
             else
             {
+
+                Trace.WriteLineIf(traceSwitch.Enabled, $"Empty keyword add at {DateTime.Now}");
+
                 MessageBox.Show(
                     "Please enter a keyword to block.",
                     "Empty Input",
