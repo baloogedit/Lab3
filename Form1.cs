@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace Lab3
             //autoflush, enable
             Trace.AutoFlush = true;
             traceSwitch.Enabled = true;
+            File.WriteAllText(logFile, ""); // clear log file at start
             Trace.WriteLineIf(traceSwitch.Enabled, $"Application started at {DateTime.Now}");
 
         }
@@ -78,6 +80,7 @@ namespace Lab3
 
             }
             Trace.WriteLineIf(traceSwitch.Enabled, $"URL entered by clicking Go: {txtURL.Text} at {DateTime.Now}");
+            txtURL.Clear();
 
         }
 
@@ -95,6 +98,7 @@ namespace Lab3
                 webBrowser1.Navigate(url);
             }
             Trace.WriteLineIf (traceSwitch.Enabled, $"URL entered by clicking Enter: {txtURL.Text} at {DateTime.Now}");
+            txtURL.Clear();
         }
 
         // check if URL has blocked keywords
