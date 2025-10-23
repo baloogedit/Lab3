@@ -156,17 +156,20 @@ namespace Lab3
 
             if (!string.IsNullOrEmpty(newKeyword))
             {
-                if (!blockedKeywords.Contains(newKeyword))
+                // LINQ check for keyword
+                var existingKeyword =
+                     (from k in blockedKeywords
+                      where k.Equals(newKeyword, StringComparison.OrdinalIgnoreCase)
+                      select k).FirstOrDefault();
+
+                if (existingKeyword == null)
                 {
                     blockedKeywords.Add(newKeyword);
-                    MessageBox.Show($"Keyword \"{newKeyword}\" added to blocked list.",
-                                    "Keyword Added",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Information);
 
-                    //log that keyword was added
+                    // log the addition
                     Trace.WriteLineIf(traceSwitch.Enabled, $"Keyword added: {newKeyword} at {DateTime.Now}");
 
+                    // show updated list
                     MessageBox.Show(
                         $"Keyword \"{newKeyword}\" added to the blocked list.\n\n" +
                         $"Current blocked keywords:\n{string.Join(", ", blockedKeywords)}",
@@ -175,14 +178,27 @@ namespace Lab3
                         MessageBoxIcon.Information
                     );
                 }
+
                 else
                 {
-                    MessageBox.Show($"Keyword \"{newKeyword}\" is already blocked.",
-                                    "Duplicate Keyword",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning);
+                    MessageBox.Show(
+                        $"Keyword \"{existingKeyword}\" is already blocked.",
+                        "Duplicate Keyword",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
                 }
             }
+            else
+            {
+                MessageBox.Show(
+                    "Please enter a keyword to block.",
+                    "Empty Input",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+            }
+
 
             toolStriptxtKeyword.Clear();
         }
