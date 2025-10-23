@@ -149,5 +149,44 @@ namespace Lab3
                 
             }
         }
+
+        private void toolStripBtnAddKeyword_Click(object sender, EventArgs e)
+        {
+            string newKeyword = toolStriptxtKeyword.Text;
+
+            if (!string.IsNullOrEmpty(newKeyword))
+            {
+                if (!blockedKeywords.Contains(newKeyword))
+                {
+                    blockedKeywords.Add(newKeyword);
+                    MessageBox.Show($"Keyword \"{newKeyword}\" added to blocked list.",
+                                    "Keyword Added",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
+
+                    //log that keyword was added
+                    Trace.WriteLineIf(traceSwitch.Enabled, $"Keyword added: {newKeyword} at {DateTime.Now}");
+
+                    MessageBox.Show(
+                        $"Keyword \"{newKeyword}\" added to the blocked list.\n\n" +
+                        $"Current blocked keywords:\n{string.Join(", ", blockedKeywords)}",
+                        "Keyword Added",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+                else
+                {
+                    MessageBox.Show($"Keyword \"{newKeyword}\" is already blocked.",
+                                    "Duplicate Keyword",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                }
+            }
+
+            toolStriptxtKeyword.Clear();
+        }
+
+
     }
 }

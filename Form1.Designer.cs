@@ -36,6 +36,8 @@
             this.homeButton = new System.Windows.Forms.ToolStripButton();
             this.txtURL = new System.Windows.Forms.ToolStripTextBox();
             this.goButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStriptxtKeyword = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripBtnAddKeyword = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,10 +59,12 @@
             this.forwardButton,
             this.homeButton,
             this.txtURL,
-            this.goButton});
+            this.goButton,
+            this.toolStriptxtKeyword,
+            this.toolStripBtnAddKeyword});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1262, 50);
+            this.toolStrip1.Size = new System.Drawing.Size(1262, 42);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -70,7 +74,7 @@
             this.backButton.Image = ((System.Drawing.Image)(resources.GetObject("backButton.Image")));
             this.backButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.backButton.Name = "backButton";
-            this.backButton.Size = new System.Drawing.Size(46, 44);
+            this.backButton.Size = new System.Drawing.Size(46, 36);
             this.backButton.Text = "backButton";
             this.backButton.Click += new System.EventHandler(this.backButton_Click);
             // 
@@ -98,7 +102,7 @@
             // 
             this.txtURL.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txtURL.Name = "txtURL";
-            this.txtURL.Size = new System.Drawing.Size(500, 50);
+            this.txtURL.Size = new System.Drawing.Size(500, 42);
             this.txtURL.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtURL_KeyDown);
             this.txtURL.Click += new System.EventHandler(this.txtURL_Click);
             // 
@@ -111,6 +115,23 @@
             this.goButton.Size = new System.Drawing.Size(46, 36);
             this.goButton.Text = "goButton";
             this.goButton.Click += new System.EventHandler(this.goButton_Click);
+            // 
+            // toolStriptxtKeyword
+            // 
+            this.toolStriptxtKeyword.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStriptxtKeyword.MaxLength = 32800;
+            this.toolStriptxtKeyword.Name = "toolStriptxtKeyword";
+            this.toolStriptxtKeyword.Size = new System.Drawing.Size(200, 42);
+            // 
+            // toolStripBtnAddKeyword
+            // 
+            this.toolStripBtnAddKeyword.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripBtnAddKeyword.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnAddKeyword.Image")));
+            this.toolStripBtnAddKeyword.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripBtnAddKeyword.Name = "toolStripBtnAddKeyword";
+            this.toolStripBtnAddKeyword.Size = new System.Drawing.Size(46, 36);
+            this.toolStripBtnAddKeyword.Text = "toolStripbtnAddKeyword";
+            this.toolStripBtnAddKeyword.Click += new System.EventHandler(this.toolStripBtnAddKeyword_Click);
             // 
             // Form1
             // 
@@ -138,6 +159,8 @@
         private System.Windows.Forms.ToolStripButton backButton;
         private System.Windows.Forms.ToolStripButton forwardButton;
         private System.Windows.Forms.ToolStripTextBox txtURL;
+        private System.Windows.Forms.ToolStripTextBox toolStriptxtKeyword;
+        private System.Windows.Forms.ToolStripButton toolStripBtnAddKeyword;
     }
 }
 
