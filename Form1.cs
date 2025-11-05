@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SQLite;
 
 namespace Lab3
 {
@@ -21,15 +22,18 @@ namespace Lab3
         //log file path
         private string logFile = "log.txt";
 
-        // list of blocked keywords
-        private List<string> blockedKeywords = new List<string>
-        {
-            "facebook","twitter","umfst","youtube","instagram", "tiktok"
-        };
+        private SQLiteHandler dbHandler;
+
+        // new list
+        private List<string> blockedKeywords = new List<string>();
+
+        //old list       
+        //private List<string> blockedKeywords = new List<string> {"facebook","twitter","umfst","youtube","instagram", "tiktok"};
         
         public Form1()
         {
             InitializeComponent();
+            dbHandler = new SQLiteHandler();
 
             // clear listeners
             Trace.Listeners.Clear();
@@ -43,16 +47,25 @@ namespace Lab3
 
             // clear log file at start
             File.WriteAllText(logFile, "");
-            Trace.WriteLineIf(traceSwitch.Enabled, $"Application started at {DateTime.Now}");
+            _ = LogTraceAsync("Application started");
 
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // connect and load keywords
+            dbHandler.ConnectToDb();
+            blockedKeywords = dbHandler.GetAllKeywords();
+
+            // clear and reload the ComboBox
+            toolStripComboBoxBlocked.Items.Clear();
+            toolStripComboBoxBlocked.Items.AddRange(blockedKeywords.ToArray());
+
             webBrowser1.ScriptErrorsSuppressed = true;
             webBrowser1.Navigate("https://www.google.com"); //default home page
 
-            toolStripComboBoxBlocked.Items.AddRange(blockedKeywords.ToArray());
+            // not needed anymore
+            //toolStripComboBoxBlocked.Items.AddRange(blockedKeywords.ToArray());
         }
 
         private void homeButton_Click(object sender, EventArgs e)
@@ -78,18 +91,13 @@ namespace Lab3
                 if (!url.StartsWith("http"))
                 {
                     url = "https://" + url;
-                    Trace.WriteLineIf(traceSwitch.Enabled, $"Inserted https:// to URL: {url} at {DateTime.Now}");
+                    _ = LogTraceAsync($"Inserted https:// to URL: {url}");
                 }
                 webBrowser1.Navigate(url);
 
             }
-            Trace.WriteLineIf(traceSwitch.Enabled, $"URL entered by clicking Go: {txtURL.Text} at {DateTime.Now}");
+            _ = LogTraceAsync($"URL entered by clicking Go: {txtURL.Text}");
             txtURL.Clear();
-
-        }
-
-        private void txtURL_Click(object sender, EventArgs e)
-        {
 
         }
 
@@ -101,14 +109,15 @@ namespace Lab3
                 // go to URL
                 webBrowser1.Navigate(url);
 
-                // Move these two lines INSIDE the if-statement
-                Trace.WriteLineIf(traceSwitch.Enabled, $"URL entered by clicking Enter: {txtURL.Text} at {DateTime.Now}");
+
+                _ = LogTraceAsync($"URL entered by clicking Enter: {txtURL.Text}");
+                //only clear after navigation attempt-the correction mentioned in git commmit
                 txtURL.Clear();
             }
         }
 
         // check if URL has blocked keywords
-        private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        private async void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
             string url = e.Url.ToString().ToLower();
 
@@ -134,9 +143,14 @@ namespace Lab3
             */
 
             // searck blocked keywords with LINQ
-            var foundKeyword = (from keyword in blockedKeywords
-                                where url.Contains(keyword)
-                                select keyword).FirstOrDefault();
+            string foundKeyword = await Task.Run(() =>
+            {
+                // This LINQ query now runs on a background thread
+                return (from keyword in blockedKeywords
+                        where url.Contains(keyword)
+                        select keyword).FirstOrDefault();
+            });
+
             // if found
             if (foundKeyword != null)
             {
@@ -150,7 +164,7 @@ namespace Lab3
                 );
 
                 // log to file
-                Trace.WriteLineIf(traceSwitch.Enabled, $"Blocked navigation to {url} at {DateTime.Now} due to keyword \"{foundKeyword}\"");
+                _ = LogTraceAsync($"Blocked navigation to {url} due to keyword \"{foundKeyword}\"");
                 return;
 
                 
@@ -171,6 +185,8 @@ namespace Lab3
 
                 if (existingKeyword == null)
                 {
+                    dbHandler.InsertKeyword(newKeyword); // Save to database
+
                     //add to list
                     blockedKeywords.Add(newKeyword);
 
@@ -179,7 +195,7 @@ namespace Lab3
 
 
                     // log the addition
-                    Trace.WriteLineIf(traceSwitch.Enabled, $"Keyword added: {newKeyword} at {DateTime.Now}");
+                    _ = LogTraceAsync($"Keyword added: {newKeyword}");
 
                     // show confirmation
                     MessageBox.Show(
@@ -192,7 +208,7 @@ namespace Lab3
 
                 else
                 {
-                    Trace.WriteLineIf(traceSwitch.Enabled, $"Tried adding duplicate keyword: {newKeyword} at {DateTime.Now}");
+                    _ = LogTraceAsync($"Tried adding duplicate keyword: {newKeyword}");
 
                     MessageBox.Show(
                         $"Keyword \"{existingKeyword}\" is already blocked.",
@@ -205,7 +221,7 @@ namespace Lab3
             else
             {
 
-                Trace.WriteLineIf(traceSwitch.Enabled, $"Empty keyword add at {DateTime.Now}");
+                _ = LogTraceAsync($"Empty keyword add");
 
                 MessageBox.Show(
                     "Please enter a keyword to block.",
@@ -220,5 +236,73 @@ namespace Lab3
         }
 
 
+        private async Task LogTraceAsync(string message)
+        {
+            // Task.Run moves the work to a background thread.
+            await Task.Run(() =>
+            {
+                // This code now runs on a different thread,
+                // so it won't block the UI.
+                Trace.WriteLineIf(traceSwitch.Enabled, $"{message} at {DateTime.Now}");
+            });
+        }
+
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dbHandler.ConnectToDb();
+            // Reload keywords from DB
+            blockedKeywords = dbHandler.GetAllKeywords();
+            toolStripComboBoxBlocked.Items.Clear();
+            toolStripComboBoxBlocked.Items.AddRange(blockedKeywords.ToArray());
+            MessageBox.Show("Connected to database.");
+        }
+
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dbHandler.DisconnectFromDb();
+            MessageBox.Show("Disconnected from database.");
+        }
+
+        private void addKeywordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+           //Use the new KeywordInputForm
+            using (KeywordInputForm kwdForm = new KeywordInputForm())
+            {
+                // Show as dialog
+                if (kwdForm.ShowDialog() == DialogResult.OK) // [cite: 145]
+                {
+                    string newKeyword = kwdForm.KeywordText.ToLower(); // [cite: 280]
+
+                    // LINQ check for duplicates
+                    if (blockedKeywords.Contains(newKeyword))
+                    {
+                        MessageBox.Show($"Keyword \"{newKeyword}\" is already blocked.", "Duplicate Keyword");
+                    }
+                    else
+                    {
+                        // Add to DB
+                        dbHandler.InsertKeyword(newKeyword);
+
+                        // Add to local list and UI
+                        blockedKeywords.Add(newKeyword);
+                        toolStripComboBoxBlocked.Items.Add(newKeyword);
+                        MessageBox.Show($"Keyword \"{newKeyword}\" added.", "Keyword Added");
+                    }
+                }
+            }
+        }
+
+        private void viewKeywordsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Get all keywords from DB
+            List<string> keywords = dbHandler.GetAllKeywords();
+            string keywordList = string.Join("\n", keywords);
+            MessageBox.Show(keywordList, "Blocked Keywords");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Lab 4 - Web Browser with SQLite", "About");
+        }
     }
 }
