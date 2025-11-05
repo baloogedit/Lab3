@@ -95,14 +95,16 @@ namespace Lab3
 
         private void txtURL_KeyDown(object sender, KeyEventArgs e)
         {
-            string url = txtURL.Text;
             if (e.KeyCode == Keys.Enter)
             {
+                string url = txtURL.Text;
                 // go to URL
                 webBrowser1.Navigate(url);
+
+                // Move these two lines INSIDE the if-statement
+                Trace.WriteLineIf(traceSwitch.Enabled, $"URL entered by clicking Enter: {txtURL.Text} at {DateTime.Now}");
+                txtURL.Clear();
             }
-            Trace.WriteLineIf (traceSwitch.Enabled, $"URL entered by clicking Enter: {txtURL.Text} at {DateTime.Now}");
-            txtURL.Clear();
         }
 
         // check if URL has blocked keywords
